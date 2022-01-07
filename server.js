@@ -8,7 +8,8 @@ const cors = require("cors");
 const httpServer = http.createServer(app);
 const ioServer = SocketIO(httpServer, {
   cors: {
-    origin: ["http://localhost:3000", "https://coldbrew-demo.herokuapp.com"],
+    // origin: ["http://localhost:3000", "https://coldbrew-demo.herokuapp.com"],
+    origin: "*",
     methods: ["GET", "POST"],
     credentials: true,
   },
@@ -17,7 +18,8 @@ const ioServer = SocketIO(httpServer, {
 let ROOM_NAME = "";
 let USER_NAME = "";
 const corsOptions = {
-  origin: ["http://localhost:3000", "https://coldbrew-demo.herokuapp.com"],
+  // origin: ["http://localhost:3000", "https://coldbrew-demo.herokuapp.com"],
+  origin: "*",
   credentials: true,
 };
 
