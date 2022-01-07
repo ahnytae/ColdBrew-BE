@@ -8,7 +8,7 @@ const cors = require("cors");
 const httpServer = http.createServer(app);
 const ioServer = SocketIO(httpServer, {
   cors: {
-    origin: "*",
+    origin: "http://localhost:3000",
     methods: ["GET", "POST"],
     credentials: true,
   },
@@ -17,7 +17,7 @@ const ioServer = SocketIO(httpServer, {
 let ROOM_NAME = "";
 let USER_NAME = "";
 const corsOptions = {
-  origin: "*",
+  origin: "http://localhost:3000",
   credentials: true,
 };
 
