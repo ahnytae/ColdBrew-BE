@@ -17,7 +17,7 @@ const ioServer = SocketIO(httpServer, {
 let ROOM_NAME = "";
 let USER_NAME = "";
 const corsOptions = {
-  origin: "http://localhost:3000",
+  origin: ["http://localhost:3000", "http://coldbrew-demo.herokuapp.com/"],
   credentials: true,
 };
 
