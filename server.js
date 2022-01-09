@@ -36,10 +36,10 @@ app.use(cors(corsOptions));
 // app.get("/exit", (req, res) => res.render("exit"));
 let ROOM_NAME = "";
 let USER_NAME = "";
-const ROOM_INFO = {
-  room: "",
-  participate: "",
-};
+// const ROOM_INFO = {
+//   room: "",
+//   participate: "",
+// };
 
 app.post("/join/:roomname/:username", (req, res) => {
   console.log("##", req.params);
@@ -65,7 +65,7 @@ ioServer.on("connection", (socket) => {
     socket["nickname"] = userName;
     socket.join(roomName);
     socket.to(ROOM_NAME).emit("success-join");
-    socket.to(ROOM_NAME).emit("Room-Info", ROOM_INFO);
+    socket.to(ROOM_NAME).emit("Room-Info", { room: "test", participate: ["one", "two"] });
     socket.to(ROOM_NAME).emit("Me-Info", socket.nickname);
   });
 
