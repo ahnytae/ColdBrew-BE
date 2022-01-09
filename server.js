@@ -15,8 +15,6 @@ const ioServer = SocketIO(httpServer, {
   },
 });
 
-let ROOM_NAME = "";
-let USER_NAME = "";
 const corsOptions = {
   // origin: ["http://localhost:3000", "https://coldbrew-demo.herokuapp.com"],
   origin: "*",
@@ -36,6 +34,12 @@ app.use(cors(corsOptions));
 // app.get("/", (req, res) => res.render("main"));
 // app.get("/room", (req, res) => res.render("room"));
 // app.get("/exit", (req, res) => res.render("exit"));
+let ROOM_NAME = "";
+let USER_NAME = "";
+const ROOM_INFO = {
+  room: "",
+  participate: [],
+};
 
 app.post("/join/:roomname/:username", (req, res) => {
   console.log("##", req.params);
@@ -43,6 +47,7 @@ app.post("/join/:roomname/:username", (req, res) => {
   USER_NAME = req.params.username;
   res.send({ data: "SUCCESS" });
 });
+
 app.get("/join", (req, res) => {
   res.json({ roomName: ROOM_NAME, userName: USER_NAME });
 });
@@ -54,11 +59,14 @@ ioServer.on("connection", (socket) => {
   console.log("connect socket server");
 
   socket.on("join-room", (roomName, userName) => {
+    ROOM_INFO = { room: roomName, participate: [...participate, userName] };
     ROOM_NAME = roomName;
-    USER_NAME = userName;
+    // USER_NAME = userName; --> socket.nickname 으로 대체
+    socket["nickname"] = userName;
     socket.join(roomName);
-    socket.to(ROOM_NAME).emit("success-join", roomName, userName);
-    // socket.to(ROOM_NAME).emit('Room-Info', roomName, userName)
+    socket.to(ROOM_NAME).emit("success-join");
+    socket.to(ROOM_NAME).emit("Room-Info", ROOM_INFO);
+    socket.to(ROOM_NAME).emit("Me-Info", socket.nickname);
   });
 
   // received offer
@@ -75,12 +83,15 @@ ioServer.on("connection", (socket) => {
     socket.to(roomName).emit("icecandidate", ice);
   });
 
+  // 끊어졌을때
   socket.on("disconnect", () => {
-    socket.to(ROOM_NAME).emit("leave", `leaveUser`);
+    socket.to(ROOM_NAME).emit("leave");
+    socket.leave(ROOM_NAME);
   });
 
-  socket.on("leave-room", () => {
+  // 방 나가기 일때
+  socket.on("left", () => {
+    socket.to(ROOM_NAME).emit("leave");
     socket.leave(ROOM_NAME);
-    socket.to(ROOM_NAME).emit("leave-user", socket.rooms);
   });
 });
