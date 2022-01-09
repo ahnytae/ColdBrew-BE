@@ -38,7 +38,7 @@ let ROOM_NAME = "";
 let USER_NAME = "";
 const ROOM_INFO = {
   room: "",
-  participate: [],
+  participate: "",
 };
 
 app.post("/join/:roomname/:username", (req, res) => {
@@ -59,7 +59,7 @@ ioServer.on("connection", (socket) => {
   console.log("connect socket server");
 
   socket.on("join-room", (roomName, userName) => {
-    ROOM_INFO = { room: roomName, participate: participate.push(userName) };
+    ROOM_INFO = { ...ROOM_INFO, room: roomName, participate: userName };
     ROOM_NAME = roomName;
     // USER_NAME = userName; --> socket.nickname 으로 대체
     socket["nickname"] = userName;
