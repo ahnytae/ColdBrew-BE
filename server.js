@@ -8,16 +8,16 @@ const cors = require("cors");
 const httpServer = http.createServer(app);
 const ioServer = SocketIO(httpServer, {
   cors: {
-    origin: ["http://localhost:3000", "https://coldbrew-demo.herokuapp.com"],
-    // origin: "*",
+    // origin: ["http://localhost:3000", "https://coldbrew-demo.herokuapp.com"],
+    origin: "*",
     methods: ["GET", "POST"],
     credentials: true,
   },
 });
 
 const corsOptions = {
-  origin: ["http://localhost:3000", "https://coldbrew-demo.herokuapp.com"],
-  // origin: "*",
+  // origin: ["http://localhost:3000", "https://coldbrew-demo.herokuapp.com"],
+  origin: "*",
   credentials: true,
 };
 
@@ -85,13 +85,13 @@ ioServer.on("connection", (socket) => {
 
   // 끊어졌을때
   socket.on("disconnect", () => {
-    socket.to(ROOM_NAME).emit("leave");
+    socket.to(socket.id).emit("leave");
     socket.leave(ROOM_NAME);
   });
 
   // 방 나가기 일때
   socket.on("left", () => {
-    socket.to(ROOM_NAME).emit("leave");
+    socket.to(socket.id).emit("leave");
     socket.leave(ROOM_NAME);
   });
 });
