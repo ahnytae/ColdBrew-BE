@@ -48,9 +48,9 @@ app.post("/join/:roomname/:username", (req, res) => {
   res.send({ data: "SUCCESS" });
 });
 
-app.get("/join", (req, res) => {
-  res.json({ roomName: ROOM_NAME, userName: USER_NAME });
-});
+// app.get("/join", (req, res) => {
+//   res.json({ roomName: ROOM_NAME, userName: USER_NAME });
+// });
 
 httpServer.listen(process.env.PORT || 3000, () => console.log("start server"));
 
@@ -85,13 +85,24 @@ ioServer.on("connection", (socket) => {
 
   // 끊어졌을때
   socket.on("disconnect", () => {
-    socket.to(socket.id).emit("leave");
+    socket.to(ROOM_NAME).emit("leave");
     socket.leave(ROOM_NAME);
   });
 
   // 방 나가기 일때
   socket.on("left", () => {
-    socket.to(socket.id).emit("leave");
+    socket.to(ROOM_NAME).emit("leave");
     socket.leave(ROOM_NAME);
+  });
+
+  // whiteboard
+  socket.on("draw", (data) => {
+    // console.log("draw", data);
+    socket.broadcast.emit("draw", data);
+  });
+
+  socket.on("clear", (data) => {
+    // console.log("clear", data);
+    socket.broadcast.emit("clear", true);
   });
 });
